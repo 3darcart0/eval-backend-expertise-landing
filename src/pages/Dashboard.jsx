@@ -4,44 +4,9 @@ import { withStyles } from '@mui/styles';
 import Navbar from "../components/NavBar";
 import { Search } from '@mui/icons-material';
 import { DataGrid } from '@mui/x-data-grid';
-// import 'fontsource-roboto';
-// // import '../assets/css/Dashboard.css';
-// import YouTubeIcon from '@material-ui/icons/YouTube';
-// import PublicIcon from '@material-ui/icons/Public';
-// import VideocamIcon from '@material-ui/icons/Videocam';
-// import CardsHeader from '../components/CardsHeader';
-// import Cards from '../components/Cards';
-// import Graphics from '../components/Graphics';
-// import TableMaterial from '../components/TableMaterial';
+import { connect } from 'react-redux';
+import { getWorkshopTypes } from '../services/actions/workshopTypeActions';
 
-
-
-// const data = [
-//     {
-//       id:1,
-//       video:
-//         "Como Hacer un Split en React JS || React Split Pane || Tutorial en Español (2020)",
-//       fecha: "6 de sep. 2020",
-//       visualizaciones: 32,
-//       imagen: require("../assets/img/split.webp"),
-//     },
-//     {
-//       id:2,
-//         video:
-//           "Cómo Solucionar Error al Crear Applicación de React JS",
-//         fecha: "5 de sep. 2020",
-//         visualizaciones: 31,
-//         imagen: require("../assets/img/error.webp"),
-//       },
-//       {
-//       id:3,
-//         video:
-//           "Cómo Utilizar Forever en Node JS || Ejecutar Node JS en Segundo Plano || Background Node JS",
-//         fecha: "4 de sep. 2020",
-//         visualizaciones: 21,
-//         imagen: require("../assets/img/forever.webp"),
-//       },
-//   ];
 const styles = theme => ({
     root: {
         flexGrow: 1
@@ -66,7 +31,7 @@ class Dashboard extends React.Component {
         this.state = {
             auto: '',
             district: '',
-            workshopType:''
+            workshopType: '',
         }
     }
 
@@ -77,8 +42,12 @@ class Dashboard extends React.Component {
         })
     }
 
+    componentDidMount() {
+        this.props.getWorkshopTypes()
+    }
+
     render() {
-        const { classes } = this.props;
+        const { classes, workshopTypes } = this.props;
         return (
             <div className={classes.root}>
                 <Grid container spacing={3}>
@@ -148,8 +117,11 @@ class Dashboard extends React.Component {
                                                     name="workshopType"
                                                     onChange={this.onHandleSelect}
                                                 >
-                                                    <MenuItem value={1}>Multimarca</MenuItem>
-                                                    <MenuItem value={2}>Concesionario</MenuItem>
+                                                    {
+                                                        workshopTypes.map((uT) =>
+                                                            <MenuItem key={uT.id} value={uT.id}>{uT.type_name}</MenuItem>
+                                                        )
+                                                    }
                                                 </Select>
                                             </FormControl>
                                         </Grid>
@@ -219,51 +191,12 @@ class Dashboard extends React.Component {
                             </div>
                         </Box>
                     </Grid>
-                    {/* <Grid item xs={12} sm={4} md={4} lg={4} xl={4}>
-                   <CardsHeader icono={<YouTubeIcon className={classes.iconos}/>} titulo="CANAL" texto="BorjaScript" color="rgba(248,80,50,1)" font="white"/>
-                </Grid>
-                <Grid item xs={12} sm={4} md={4} lg={4} xl={4}>
-                <CardsHeader icono={<PublicIcon className={classes.iconos}/>} titulo="PAÍS" texto="México" color="rgba(248,80,50,1)" font="white"/>
-                </Grid>
-                <Grid item xs={12} sm={4} md={4} lg={4} xl={4}>
-                <CardsHeader icono={<VideocamIcon className={classes.iconos}/>} titulo="CANTIDAD DE VÍDEOS" texto="85" color="rgba(248,80,50,1)" font="white"/>
-                </Grid>
-
-                <Grid container spacing={1} className={classes.container} xs={12} sm={12} md={6} lg={6} xl={6}>
-                    <Grid item xs={12} sm={6} md={6} lg={6} xl={6}>
-                    <Cards titulo="SUSCRIPTORES" texto="692"/>
-                    </Grid>
-
-                    <Grid item xs={12} sm={6} md={6} lg={6} xl={6}>
-                    <Cards titulo="VISUALIZACIONES" texto="111,092"/>
-                    </Grid>
-
-                    <Grid item xs={12} sm={6} md={6} lg={6} xl={6}>
-                    <Cards titulo="TIEMPO VISUALIZACIÓN" texto="2,504 horas"/>
-                    </Grid>
-
-                    <Grid item xs={12} sm={6} md={6} lg={6} xl={6}>
-                    <Cards titulo="PORCENTAJE IMPRESIONES" texto="14.2%"/>
-                    </Grid>
-
-                    </Grid>
-
-                    <Grid item xs={0} sm={0} md={1} lg={1} xl={1}></Grid>
-
-                    <Grid item xs={12} sm={12} md={5} lg={5} xl={5} className={classes.containerGrafica}>
-                        <Graphics />
-                    </Grid>
-
-
-                    <Grid item xs={12} className={classes.containerTabla}>
-                    <TableMaterial data={data}/>
-                    </Grid> */}
-
-
                 </Grid>
             </div>
         );
     }
 }
 
-export default withStyles(styles)(Dashboard);
+const mapStateToProps = (state) => ({ workshopTypes: state.workshopTypes.workshopTypes })
+
+export default connect(mapStateToProps, { getWorkshopTypes })(withStyles(styles)(Dashboard));
