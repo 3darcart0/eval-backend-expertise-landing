@@ -6,6 +6,8 @@ import { Search } from '@mui/icons-material';
 import { DataGrid } from '@mui/x-data-grid';
 import { connect } from 'react-redux';
 import { getWorkshopTypes } from '../services/actions/workshopTypeActions';
+import { getDistrictsLima } from '../services/actions/ubigeoActions';
+import { getMyVehicles } from '../services/actions/vehicleActions';
 
 const styles = theme => ({
     root: {
@@ -43,11 +45,13 @@ class Dashboard extends React.Component {
     }
 
     componentDidMount() {
-        this.props.getWorkshopTypes()
+        this.props.getWorkshopTypes();
+        this.props.getDistrictsLima();
+        this.props.getMyVehicles();
     }
 
     render() {
-        const { classes, workshopTypes } = this.props;
+        const { classes, workshopTypes, ubigeo, vehicles } = this.props;
         return (
             <div className={classes.root}>
                 <Grid container spacing={3}>
@@ -82,8 +86,11 @@ class Dashboard extends React.Component {
                                                     name="auto"
                                                     onChange={this.onHandleSelect}
                                                 >
-                                                    <MenuItem value={1}>Marca Hyundai - Modelo: Accent - Año:2012 - Placa: X1W859</MenuItem>
-                                                    <MenuItem value={2}>Marca Great Wall - Modelo: H6 - Año:2018 - Placa: D9P36</MenuItem>
+                                                    {
+                                                        vehicles.map((v) =>
+                                                            <MenuItem key={v.id} value={v.id}>Marca: {v.brand_name} - Modelo: {v.model_name} - Placa: {v.plate}</MenuItem>
+                                                        )
+                                                    }
                                                 </Select>
                                             </FormControl>
                                         </Grid>
@@ -101,8 +108,11 @@ class Dashboard extends React.Component {
                                                     name="district"
                                                     onChange={this.onHandleSelect}
                                                 >
-                                                    <MenuItem value={1}>Lima</MenuItem>
-                                                    <MenuItem value={2}>Callao</MenuItem>
+                                                    {
+                                                        ubigeo.map((u) =>
+                                                            <MenuItem key={u.id} value={u.id}>{u.district}</MenuItem>
+                                                        )
+                                                    }
                                                 </Select>
                                             </FormControl>
                                         </Grid>
@@ -137,6 +147,7 @@ class Dashboard extends React.Component {
                                                         [
                                                             {
                                                                 field: 'id',
+                                                                headerName: 'ID'
                                                             },
                                                             {
                                                                 field: 'type',
@@ -144,15 +155,19 @@ class Dashboard extends React.Component {
                                                             },
                                                             {
                                                                 field: 'name',
+                                                                headerName: 'Nombre'
                                                             },
                                                             {
                                                                 field: 'address',
+                                                                headerName: 'Dirección'
                                                             },
                                                             {
                                                                 field: 'telephone',
+                                                                headerName: 'Telefono'
                                                             },
                                                             {
                                                                 field: 'web',
+                                                                headerName: 'Web'
                                                             }
                                                         ]
                                                     }
@@ -197,6 +212,11 @@ class Dashboard extends React.Component {
     }
 }
 
-const mapStateToProps = (state) => ({ workshopTypes: state.workshopTypes.workshopTypes })
+const mapStateToProps = (state) => (
+    { 
+        workshopTypes: state.workshopTypes.workshopTypes,
+        ubigeo: state.ubigeo.ubigeo,
+        vehicles: state.vehicles.vehicles,
+    })
 
-export default connect(mapStateToProps, { getWorkshopTypes })(withStyles(styles)(Dashboard));
+export default connect(mapStateToProps, { getWorkshopTypes, getDistrictsLima, getMyVehicles })(withStyles(styles)(Dashboard));
