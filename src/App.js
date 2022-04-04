@@ -5,11 +5,11 @@ import { BrowserRouter as Router, Route, Navigate, Routes } from 'react-router-d
 
 import Dashboard from './pages/Dashboard';
 
-const store = ConfigureStore();
+// const store = ConfigureStore();
 
 function App() {
   return (
-    <Provider store={store}>
+    <Provider store={ConfigureStore}>
       <Router basename="/">
         <Routes>
         <Route expect path="/" render={ <Navigate to="/home" /> } />
